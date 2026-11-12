@@ -16,7 +16,7 @@ FROM builder AS prod-deps
 RUN pnpm install --frozen-lockfile --prod
 
 FROM node:24-slim
-ENV NODE_ENV=production PORT=3000 DATABASE_PATH=/data/darts.db WEB_ROOT=/app/dist/web
+ENV NODE_ENV=production PORT=3000 DATABASE_PATH=/data/darts.db WEB_ROOT=/app/dist/web PUID=1000 PGID=1000
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY package.json ./
@@ -24,10 +24,10 @@ COPY src/engine ./src/engine
 COPY src/contracts ./src/contracts
 COPY src/server ./src/server
 COPY --from=build /app/dist/web ./dist/web
-RUN mkdir /data && chown node:node /data
-USER node
+COPY docker-entrypoint.sh /usr/local/bin/
 VOLUME /data
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD node -e "fetch('http://127.0.0.1:' + process.env.PORT + '/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "src/server/main.ts"]

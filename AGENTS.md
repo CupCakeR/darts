@@ -29,7 +29,7 @@ Self-hosted scoring app for a non-digital dartboard. React SPA + Fastify, SQLite
 - `pnpm test` / `pnpm test:watch`: Vitest
 - `pnpm build`: builds the web app to `dist/web`. The server has no build step
 - `pnpm db:generate`: after changing `src/server/db/schema.ts`, generates a migration. Migrations run on startup
-- Production: CI builds the image and pushes it to GHCR (`.github/workflows/image.yml`). The container needs `APP_PIN`, `COOKIE_SECRET` and a volume on `/data` that uid 1000 can write to
+- Production: CI builds the image and pushes it to GHCR (`.github/workflows/image.yml`). The container needs `APP_PIN`, `COOKIE_SECRET` and a volume on `/data`. It starts as root, chowns the data folder to `PUID`:`PGID` (default 1000:1000; Unraid uses 99:100) and then drops privileges
 
 ## Conventions
 

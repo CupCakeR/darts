@@ -46,6 +46,25 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
+          load: true
+          tags: darts:test
+          cache-from: type=gha
+      - name: Smoke test
+        run: |
+          mkdir -p "$RUNNER_TEMP/data"
+          sudo chown root:root "$RUNNER_TEMP/data"
+          docker run -d --name darts -p 3000:3000 -v "$RUNNER_TEMP/data:/data" \
+            -e APP_PIN=1234 -e COOKIE_SECRET="$(openssl rand -hex 32)" -e PUID=99 -e PGID=100 darts:test
+          for _ in $(seq 30); do curl -sf localhost:3000/api/health && break; sleep 1; done
+          curl -sf localhost:3000/api/health
+          test "$(stat -c %u "$RUNNER_TEMP/data/darts.db")" = 99
+          test "$(docker exec darts sh -c 'stat -c %u /proc/1')" = 99
+      - name: Container logs
+        if: failure()
+        run: docker logs darts
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

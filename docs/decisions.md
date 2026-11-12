@@ -24,3 +24,4 @@ Append-only. One line of decision, one line of reason.
 - **The client replays throws itself; the API returns throws, not game state.** That keeps the contract small, and the engine is shared anyway
 - **Optimistic throw input, serialized per match.** Tapping must feel instant on the LAN. Each throw carries the expected `seq`, so the server can reject duplicates
 - **Custom start scores go down to 2.** Useful for checkout practice
+- **The image starts as root and drops to `PUID`/`PGID`.** Unraid appdata folders are root- or 99:100-owned, so a fixed uid fails on first start

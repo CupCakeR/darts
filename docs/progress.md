@@ -26,4 +26,4 @@ Milestones 1–3 are done, but milestone 3 still needs testing on a real device.
 - The server rejects a throw unless `seq` equals the current throw count (409 `stale-seq`), which guards against double submits and a second device
 - Editing: tap a dart chip (current turn, or each player's last turn in this leg), then enter the replacement on the pad. Total turns are edited with the total keypad
 - Rematch rotates the player order so someone else starts
-- Verify the first CI image build (better-sqlite3 prebuilds) and the first run on the server (uid 1000 on the data volume)
+- Verify the first CI image build (better-sqlite3 prebuilds) and the first run on the server (PUID/PGID handling on Unraid)
