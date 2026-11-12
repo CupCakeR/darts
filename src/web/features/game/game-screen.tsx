@@ -12,10 +12,14 @@ import {
 } from "../../data/matches.ts";
 import { de } from "../../i18n/de.ts";
 import { PadButton } from "../../ui/pad-button.tsx";
+import { TABLET_QUERY, useMediaQuery } from "../../ui/use-media-query.ts";
+import { DartboardPad } from "./dartboard-pad.tsx";
 import { DartPad } from "./dart-pad.tsx";
 import { MatchOver } from "./match-over.tsx";
 import { Scoreboard, type EditTarget } from "./scoreboard.tsx";
 import { TotalPad } from "./total-pad.tsx";
+
+type InputMode = "board" | "dart" | "total";
 
 const errorMessage = (code: string) => de.game.errors[code] ?? de.common.error;
 
@@ -23,7 +27,9 @@ function X01Game({ match }: { match: Match }) {
   const navigate = useNavigate();
   const changes = useThrowChanges(match.id);
   const abandon = useAbandonMatch();
-  const [inputMode, setInputMode] = useState<"dart" | "total">("dart");
+  const isTablet = useMediaQuery(TABLET_QUERY);
+  const [chosenMode, setInputMode] = useState<InputMode>(isTablet ? "board" : "dart");
+  const inputMode = chosenMode === "board" && !isTablet ? "dart" : chosenMode;
   const [editing, setEditing] = useState<EditTarget | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +53,8 @@ function X01Game({ match }: { match: Match }) {
 
   const startEdit = (target: EditTarget) => {
     setEditing((current) => (current?.seq === target.seq ? null : target));
-    setInputMode(target.kind);
+    if (target.kind === "total") setInputMode("total");
+    else if (inputMode === "total") setInputMode(isTablet ? "board" : "dart");
   };
 
   const undo = () => {
@@ -85,7 +92,15 @@ function X01Game({ match }: { match: Match }) {
       </section>
 
       <section className="flex min-h-0 flex-col gap-1.5">
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid auto-cols-fr grid-flow-col gap-1.5">
+          {isTablet && (
+            <PadButton
+              tone={inputMode === "board" ? "active" : "action"}
+              onClick={() => setInputMode("board")}
+            >
+              {de.game.boardMode}
+            </PadButton>
+          )}
           <PadButton tone={inputMode === "dart" ? "active" : "action"} onClick={() => setInputMode("dart")}>
             {de.game.dartMode}
           </PadButton>
@@ -98,12 +113,19 @@ function X01Game({ match }: { match: Match }) {
         </div>
         {editing && <p className="font-bold text-board-red">{de.game.editing}</p>}
         <div className="min-h-0 flex-1">
-          {inputMode === "dart" ? (
+          {inputMode === "board" && (
+            <DartboardPad
+              disabled={finished && !editing}
+              onDart={(dart: Dart) => submitThrow({ kind: "dart", dart })}
+            />
+          )}
+          {inputMode === "dart" && (
             <DartPad
               disabled={finished && !editing}
               onDart={(dart: Dart) => submitThrow({ kind: "dart", dart })}
             />
-          ) : (
+          )}
+          {inputMode === "total" && (
             <TotalPad
               remaining={totalRemaining}
               outRule={match.config.outRule}
