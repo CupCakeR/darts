@@ -4,7 +4,7 @@ import { z } from "zod";
 const rule = z.enum(["straight", "double", "master"]);
 
 export const x01ConfigSchema = z.object({
-  startScore: z.int().min(101).max(1001),
+  startScore: z.int().min(2).max(1001),
   inRule: rule,
   outRule: rule,
   legsPerSet: z.int().min(1).max(11),

@@ -1,34 +1,14 @@
-import type { FastifyInstance } from "fastify";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { buildApp } from "./app.ts";
-import { openDatabase } from "./db/client.ts";
-import { createAuthService } from "./modules/auth/service.ts";
-import { createPlayerService } from "./modules/players/service.ts";
-import { createSqlitePlayerRepository } from "./modules/players/sqlite.ts";
+import { createTestApp, type TestApp } from "./testing.ts";
 
-let app: FastifyInstance;
-let cookie: string;
+let app: TestApp["app"];
+let api: TestApp["api"];
 
 beforeEach(async () => {
-  let id = 0;
-  const db = openDatabase(":memory:");
-  app = await buildApp({
-    config: { cookieSecret: "x".repeat(32), webRoot: undefined, logLevel: "silent" },
-    auth: createAuthService({ pin: "1234" }),
-    players: createPlayerService({
-      repo: createSqlitePlayerRepository(db),
-      newId: () => `p${++id}`,
-      now: () => new Date("2026-11-12T10:00:00Z"),
-    }),
-  });
-  const login = await app.inject({ method: "POST", url: "/api/auth", payload: { pin: "1234" } });
-  cookie = login.headers["set-cookie"] as string;
+  ({ app, api } = await createTestApp());
 });
 
 afterEach(() => app.close());
-
-const api = (method: "GET" | "POST" | "PATCH", url: string, payload?: object) =>
-  app.inject({ method, url, payload, headers: { cookie } });
 
 describe("auth", () => {
   it("keeps health public and guards everything else", async () => {

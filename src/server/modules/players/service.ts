@@ -27,6 +27,15 @@ export function createPlayerService({ repo, newId, now }: Deps) {
       return (await repo.list({ includeArchived })).map(toPlayer);
     },
 
+    async getMany(ids: readonly string[]): Promise<Player[]> {
+      const byId = new Map((await repo.findByIds(ids)).map((record) => [record.id, record]));
+      return ids.map((id) => {
+        const record = byId.get(id);
+        if (!record) throw notFound("player");
+        return toPlayer(record);
+      });
+    },
+
     async create(input: CreatePlayer): Promise<Player> {
       await assertNameFree(input.name);
       const record = { id: newId(), ...input, archivedAt: null, createdAt: now() };

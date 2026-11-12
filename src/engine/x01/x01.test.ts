@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { replay, type Throw } from "../game-mode.ts";
 import { darts, labels } from "./test-helpers.ts";
-import { DEFAULT_X01_CONFIG, suggestCheckout, x01, type X01Config, type X01State } from "./x01.ts";
+import {
+  currentTurnFirstThrow,
+  DEFAULT_X01_CONFIG,
+  suggestCheckout,
+  x01,
+  type X01Config,
+  type X01State,
+} from "./x01.ts";
 
 const play = (throws: Throw[], config: Partial<X01Config> = {}, players = 2): X01State => {
   const result = replay(x01, { ...DEFAULT_X01_CONFIG, ...config }, players, throws);
@@ -114,5 +121,14 @@ describe("suggestCheckout", () => {
   it("suggests a route for the darts left", () => {
     const state = play(darts("T20 T20"), { startScore: 160 });
     expect(labels(suggestCheckout(state))).toBe("D20");
+  });
+});
+
+describe("throw positions", () => {
+  it("links turns to their first throw", () => {
+    const state = play([...darts("20 20 20"), total(100), ...darts("T20")]);
+    expect(state.turns.map((turn) => turn.firstThrow)).toEqual([0, 3]);
+    expect(state.throwCount).toBe(5);
+    expect(currentTurnFirstThrow(state)).toBe(4);
   });
 });

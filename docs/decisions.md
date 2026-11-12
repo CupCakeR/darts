@@ -21,3 +21,6 @@ Append-only. One line of decision, one line of reason.
 - **TypeScript 6, not 7.** typescript-eslint doesn't support 7 yet
 - **`no-non-null-assertion` is off.** `noUncheckedIndexedAccess` is on, and the engine indexes players by position
 - **Deployment is a GHCR image built by GitHub Actions.** The server pulls it. Reverse proxy and compose config are not part of this repo
+- **The client replays throws itself; the API returns throws, not game state.** That keeps the contract small, and the engine is shared anyway
+- **Optimistic throw input, serialized per match.** Tapping must feel instant on the LAN. Each throw carries the expected `seq`, so the server can reject duplicates
+- **Custom start scores go down to 2.** Useful for checkout practice

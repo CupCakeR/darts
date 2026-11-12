@@ -28,6 +28,7 @@ export interface X01Player {
 
 export interface X01Turn {
   player: number;
+  firstThrow: number;
   set: number;
   leg: number;
   startRemaining: number;
@@ -48,6 +49,7 @@ export interface X01State {
   turnDarts: Dart[];
   turnStart: { remaining: number; isIn: boolean };
   turns: X01Turn[];
+  throwCount: number;
   winner: number | null;
 }
 
@@ -99,6 +101,7 @@ function endTurn(state: X01State, turn: Pick<X01Turn, "darts" | "dartCount" | "b
   state.turns.push({
     ...turn,
     player: state.current,
+    firstThrow: state.throwCount - (turn.darts ? turn.darts.length : 1),
     set: state.set,
     leg: state.leg,
     startRemaining: state.turnStart.remaining,
@@ -161,6 +164,7 @@ export const x01: GameMode<X01Config, X01State> = {
       turnDarts: [],
       turnStart: { remaining: config.startScore, isIn: players[0]!.isIn },
       turns: [],
+      throwCount: 0,
       winner: null,
     };
   },
@@ -168,6 +172,7 @@ export const x01: GameMode<X01Config, X01State> = {
   apply(state, input: Throw): ApplyResult<X01State> {
     if (state.winner !== null) return { ok: false, error: "match-finished" };
     const next = structuredClone(state);
+    next.throwCount++;
     const error =
       input.kind === "dart" ? applyDart(next, input.dart) : applyTotal(next, input.score, input.darts);
     return error ? { ok: false, error } : { ok: true, state: next };
@@ -181,3 +186,5 @@ export function suggestCheckout(state: X01State): Dart[] | null {
   if (!player?.isIn || state.winner !== null) return null;
   return findCheckout(player.remaining, 3 - state.turnDarts.length, state.config.outRule);
 }
+
+export const currentTurnFirstThrow = (state: X01State): number => state.throwCount - state.turnDarts.length;

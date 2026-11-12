@@ -9,6 +9,8 @@ import { DomainError } from "./errors.ts";
 import { authRoutes, readSession } from "./modules/auth/routes.ts";
 import type { AuthService } from "./modules/auth/service.ts";
 import { healthRoutes } from "./modules/health/routes.ts";
+import { matchRoutes } from "./modules/matches/routes.ts";
+import type { MatchService } from "./modules/matches/service.ts";
 import { playerRoutes } from "./modules/players/routes.ts";
 import type { PlayerService } from "./modules/players/service.ts";
 
@@ -16,11 +18,12 @@ export interface AppDeps {
   config: Pick<Config, "cookieSecret" | "webRoot" | "logLevel">;
   auth: AuthService;
   players: PlayerService;
+  matches: MatchService;
 }
 
 const PUBLIC_API_ROUTES = new Set(["/api/auth", "/api/health"]);
 
-export async function buildApp({ config, auth, players }: AppDeps) {
+export async function buildApp({ config, auth, players, matches }: AppDeps) {
   const app = Fastify({ logger: { level: config.logLevel }, trustProxy: true });
 
   await app.register(cookie, { secret: config.cookieSecret });
@@ -45,6 +48,7 @@ export async function buildApp({ config, auth, players }: AppDeps) {
   await app.register(healthRoutes, { prefix: "/api/health" });
   await app.register(authRoutes, { prefix: "/api/auth", auth });
   await app.register(playerRoutes, { prefix: "/api/players", players });
+  await app.register(matchRoutes, { prefix: "/api/matches", matches });
 
   if (config.webRoot) await serveWeb(app, config.webRoot);
   return app;

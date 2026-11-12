@@ -1,4 +1,4 @@
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import type { Db } from "../../db/client.ts";
 import { players } from "../../db/schema.ts";
 import type { PlayerRepository } from "./repository.ts";
@@ -16,6 +16,14 @@ export function createSqlitePlayerRepository(db: Db): PlayerRepository {
 
     async findById(id) {
       return db.select().from(players).where(eq(players.id, id)).get();
+    },
+
+    async findByIds(ids) {
+      return db
+        .select()
+        .from(players)
+        .where(inArray(players.id, [...ids]))
+        .all();
     },
 
     async findActiveByName(name) {
