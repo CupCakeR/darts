@@ -44,6 +44,7 @@ export function DartPad({ onDart, disabled }: { onDart: (dart: Dart) => void; di
       ))}
       <PadButton
         className="col-span-2"
+        tone="green"
         onClick={() => send({ segment: 25, multiplier: 1 })}
         disabled={disabled || multiplier === 3}
       >
