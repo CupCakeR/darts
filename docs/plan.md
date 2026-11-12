@@ -162,7 +162,7 @@ Computed in the engine (not a hardcoded table) for every remaining score ≤ 170
 ## Deployment
 
 - Multi-stage Dockerfile (`node:24-slim`; better-sqlite3 needs a glibc build): install → build the web app → slim runtime with production deps only, running as a non-root user
-- GitHub Actions (`.github/workflows/image.yml`) runs `pnpm check`, then builds the image and pushes it to `ghcr.io/<owner>/<repo>`. Pushes to `main` become `latest` + `sha-…`, and `v*` tags become semver tags
+- GitHub Actions (`.github/workflows/image.yml`) runs `pnpm check`, then builds the image and pushes it to `ghcr.io/<owner>/<repo>`. Pushes to `master` become `latest` + `sha-…`, and `v*` tags become semver tags
 - The server pulls the image and runs it with a volume on `/data` and the env vars `APP_PIN` and `COOKIE_SECRET`. Container port 3000. Reverse proxy and compose setup live on the server, not in this repo
 - SQLite runs in WAL mode. Migrations run automatically at startup. A nightly `VACUUM INTO /data/backups/…` keeps the last N backups
 - `GET /api/health` for the container healthcheck
