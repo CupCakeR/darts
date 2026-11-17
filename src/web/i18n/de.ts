@@ -23,7 +23,7 @@ export const de = {
   },
   setup: {
     title: "Neues Spiel",
-    players: "Spieler (Reihenfolge = Wurfreihenfolge)",
+    players: "Spieler",
     noPlayers: "Lege zuerst Spieler an",
     managePlayers: "Spieler verwalten",
     startScore: "Startpunkte",
@@ -33,6 +33,15 @@ export const de = {
     sets: "Sets (first to)",
     start: "Spiel starten",
     rules: { straight: "Single", double: "Double", master: "Master" },
+    hints: {
+      players: "Antippen wählt aus. Die Zahl ist die Wurfreihenfolge, der Erste beginnt",
+      startScore: "Punkte, die jeder auf 0 bringen muss. 501 ist der Standard, 301 ist kurz, 701 lang",
+      inRule: "Single: jeder Treffer zählt sofort. Double: erst ab einem Doppelfeld wird gezählt",
+      outRule:
+        "Wie das Leg beendet werden muss. Single: beliebiges Feld. Double: ein Doppel oder Bull. Master: Doppel, Triple oder Bull",
+      legs: "Wer zuerst so viele Legs gewinnt, gewinnt das Set. Mit 1 ist jedes Leg ein Spiel",
+      sets: "Wer zuerst so viele Sets gewinnt, gewinnt das Spiel. 1 bedeutet nur Legs zählen",
+    },
   },
   game: {
     leg: "Leg",

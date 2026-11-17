@@ -76,7 +76,7 @@ export function SetupScreen() {
 
   return (
     <Screen title={de.setup.title} back="/">
-      <Field label={de.setup.players}>
+      <Field label={de.setup.players} hint={de.setup.hints.players}>
         {players.data?.length === 0 ? (
           <Link to="/players" className="text-lg italic underline decoration-1 underline-offset-4">
             {de.setup.noPlayers}
@@ -85,7 +85,7 @@ export function SetupScreen() {
           <PlayerPicker players={players.data ?? []} selected={playerIds} onChange={setSelected} />
         )}
       </Field>
-      <Field label={de.setup.startScore}>
+      <Field label={de.setup.startScore} hint={de.setup.hints.startScore}>
         <Segmented
           options={START_SCORES}
           value={config.startScore}
@@ -93,21 +93,21 @@ export function SetupScreen() {
         />
       </Field>
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label={de.setup.inRule}>
+        <Field label={de.setup.inRule} hint={de.setup.hints.inRule}>
           <Segmented
             options={ruleOptions(["straight", "double"])}
             value={config.inRule}
             onChange={(inRule) => update({ inRule })}
           />
         </Field>
-        <Field label={de.setup.outRule}>
+        <Field label={de.setup.outRule} hint={de.setup.hints.outRule}>
           <Segmented
             options={ruleOptions(["straight", "double", "master"])}
             value={config.outRule}
             onChange={(outRule) => update({ outRule })}
           />
         </Field>
-        <Field label={de.setup.legs}>
+        <Field label={de.setup.legs} hint={de.setup.hints.legs}>
           <Stepper
             value={config.legsPerSet}
             min={1}
@@ -115,7 +115,7 @@ export function SetupScreen() {
             onChange={(legsPerSet) => update({ legsPerSet })}
           />
         </Field>
-        <Field label={de.setup.sets}>
+        <Field label={de.setup.sets} hint={de.setup.hints.sets}>
           <Stepper value={config.sets} min={1} max={7} onChange={(sets) => update({ sets })} />
         </Field>
       </div>
