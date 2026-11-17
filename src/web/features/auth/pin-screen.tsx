@@ -33,7 +33,12 @@ export function PinScreen() {
           value={pin}
           onChange={(event) => setPin(event.target.value)}
         />
-        <p className="min-h-6 text-board-red">{errorMessage(login.error)}</p>
+        <p
+          key={login.failureCount}
+          className={`min-h-6 text-board-red ${login.error ? "animate-shake" : ""}`}
+        >
+          {errorMessage(login.error)}
+        </p>
         <Button type="submit" disabled={!pin || login.isPending}>
           {de.auth.submit}
         </Button>

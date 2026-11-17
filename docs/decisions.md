@@ -25,3 +25,4 @@ Append-only. One line of decision, one line of reason.
 - **Optimistic throw input, serialized per match.** Tapping must feel instant on the LAN. Each throw carries the expected `seq`, so the server can reject duplicates
 - **Custom start scores go down to 2.** Useful for checkout practice
 - **The image starts as root and drops to `PUID`/`PGID`.** Unraid appdata folders are root- or 99:100-owned, so a fixed uid fails on first start
+- **No animation library. Use CSS keyframes plus the Web Animations API for tap feedback.** iOS Safari won't reliably show `:active` on quick taps, but an animation started on pointer-down always plays through. The effects are small enough that a library adds weight without benefit

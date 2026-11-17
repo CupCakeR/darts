@@ -1,6 +1,7 @@
 import type { Player } from "#contracts";
 import { dartLabel, suggestCheckout, threeDartAverage, type X01State, type X01Turn } from "#engine";
 import { de } from "../../i18n/de.ts";
+import { AnimatedNumber } from "../../ui/animated-number.tsx";
 import { formatAverage, formatRoute } from "./format.ts";
 
 export interface EditTarget {
@@ -54,7 +55,7 @@ function ChipRow({
           key={chip.target.seq}
           type="button"
           onClick={() => onEdit(chip.target)}
-          className={`min-h-10 min-w-14 border-2 px-2 text-lg font-bold tabular-nums ${
+          className={`min-h-10 min-w-14 animate-pop border-2 px-2 text-lg font-bold tabular-nums transition-colors ${
             editing === chip.target.seq ? "border-board-red bg-board-red text-white" : "border-current"
           }`}
         >
@@ -64,7 +65,9 @@ function ChipRow({
       {Array.from({ length: empty }, (_, index) => (
         <span key={index} className="min-h-10 min-w-14 border-2 border-dashed border-current opacity-30" />
       ))}
-      {bust && <span className="ml-2 text-lg font-black text-board-red uppercase">{de.game.bust}</span>}
+      {bust && (
+        <span className="ml-2 animate-pop text-lg font-black text-board-red uppercase">{de.game.bust}</span>
+      )}
     </div>
   );
 }
@@ -96,11 +99,14 @@ export function Scoreboard({
         const active = index === state.current && state.winner === null;
         const lastTurn = lastTurnInLeg(state, index);
         const chips = active ? currentChips(state) : lastTurn ? turnChips(lastTurn) : [];
+        const busted = !active && lastTurn?.bust;
 
         return (
           <li
             key={player.id}
-            className={`flex flex-col gap-2 border-l-8 px-4 py-3 ${active ? "bg-ink text-paper" : "bg-white"}`}
+            className={`flex flex-col gap-2 border-l-8 px-4 py-3 transition-colors duration-300 ${
+              active ? "bg-ink text-paper" : "bg-white"
+            } ${busted ? "animate-shake" : ""}`}
             style={{ borderLeftColor: player.color }}
           >
             <div className="flex items-baseline gap-4">
@@ -112,17 +118,18 @@ export function Scoreboard({
                   {formatAverage(threeDartAverage(state.turns, index))}
                 </span>
               </div>
-              <span className="text-6xl leading-none font-black tabular-nums">{score.remaining}</span>
+              <AnimatedNumber
+                value={score.remaining}
+                className="text-6xl leading-none font-black tabular-nums"
+              />
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <ChipRow
-                chips={chips}
-                slots={active ? 3 : 0}
-                editing={editing}
-                onEdit={onEdit}
-                bust={!active && lastTurn?.bust}
-              />
-              {active && checkout && <span className="text-xl font-bold tabular-nums">{checkout}</span>}
+              <ChipRow chips={chips} slots={active ? 3 : 0} editing={editing} onEdit={onEdit} bust={busted} />
+              {active && checkout && (
+                <span key={checkout} className="animate-enter text-xl font-bold tabular-nums">
+                  {checkout}
+                </span>
+              )}
             </div>
           </li>
         );

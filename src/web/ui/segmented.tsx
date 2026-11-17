@@ -1,3 +1,5 @@
+import { press } from "./motion.ts";
+
 interface Option<T> {
   value: T;
   label: string;
@@ -18,8 +20,9 @@ export function Segmented<T extends string | number>({
         <button
           key={option.value}
           type="button"
+          onPointerDown={(event) => press(event.currentTarget)}
           onClick={() => onChange(option.value)}
-          className={`min-h-14 flex-1 px-3 text-lg font-semibold ${
+          className={`min-h-14 flex-1 px-3 text-lg font-semibold transition-colors duration-150 ${
             option.value === value ? "bg-ink text-paper" : "text-ink"
           }`}
         >

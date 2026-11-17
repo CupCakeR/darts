@@ -17,6 +17,7 @@ Milestones 1–3 are done, but milestone 3 still needs testing on a real device.
 ## Next
 
 - The user tests a real game on the iPad. Collect feedback on the input flow first, then on looks
+- Check the new animations on the iPad: tap feedback on the pads, the board hit marker, the score count-down, the bust shake and the 180 stamp. Tune durations in `src/web/styles.css` and `src/web/ui/motion.ts`
 - Agree on a UI direction (`docs/ui.md`). The current screens are functional placeholders
 - Milestone 4: PWA manifest + icons, wake lock, layout polish
 
@@ -25,5 +26,6 @@ Milestones 1–3 are done, but milestone 3 still needs testing on a real device.
 - Game screen: `src/web/features/game/`. Engine state is replayed on the client from `match.throws`. Changes are optimistic and serialized per match through a TanStack mutation scope (`src/web/data/matches.ts`)
 - The server rejects a throw unless `seq` equals the current throw count (409 `stale-seq`), which guards against double submits and a second device
 - Editing: tap a dart chip (current turn, or each player's last turn in this leg), then enter the replacement on the pad. Total turns are edited with the total keypad
+- Motion: keyframes are theme tokens (`--animate-*` in `styles.css`), and pointer-down press feedback comes from `src/web/ui/motion.ts` (Web Animations API). Both respect `prefers-reduced-motion`. Use `key={value}` together with `animate-pop` to replay an animation when a value changes
 - Rematch rotates the player order so someone else starts
 - Verify the first CI image build (better-sqlite3 prebuilds) and the first run on the server (PUID/PGID handling on Unraid)

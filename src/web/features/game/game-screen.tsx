@@ -12,6 +12,7 @@ import {
 } from "../../data/matches.ts";
 import { de } from "../../i18n/de.ts";
 import { PadButton } from "../../ui/pad-button.tsx";
+import { Stamp } from "../../ui/stamp.tsx";
 import { TABLET_QUERY, useMediaQuery } from "../../ui/use-media-query.ts";
 import { DartboardPad } from "./dartboard-pad.tsx";
 import { DartPad } from "./dart-pad.tsx";
@@ -32,6 +33,7 @@ function X01Game({ match }: { match: Match }) {
   const inputMode = chosenMode === "board" && !isTablet ? "dart" : chosenMode;
   const [editing, setEditing] = useState<EditTarget | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loadedThrows] = useState(match.throws.length);
 
   const replayed = useMemo(
     () => replay(x01, match.config, match.players.length, match.throws),
@@ -69,6 +71,8 @@ function X01Game({ match }: { match: Match }) {
 
   const serverError = changes.error instanceof ApiError ? errorMessage(changes.error.message) : null;
   const finished = state.winner !== null;
+  const lastTurn = state.turns.at(-1);
+  const celebrate = lastTurn?.scored === 180 && lastTurn.firstThrow >= loadedThrows;
   const totalRemaining =
     editing?.kind === "total" ? editing.startRemaining : state.players[state.current]!.remaining;
 
@@ -88,7 +92,11 @@ function X01Game({ match }: { match: Match }) {
           </button>
         </header>
         <Scoreboard state={state} players={match.players} editing={editing?.seq ?? null} onEdit={startEdit} />
-        {(error ?? serverError) && <p className="text-lg font-bold text-board-red">{error ?? serverError}</p>}
+        {(error ?? serverError) && (
+          <p key={error ?? serverError} className="animate-shake text-lg font-bold text-board-red">
+            {error ?? serverError}
+          </p>
+        )}
       </section>
 
       <section className="flex min-h-0 flex-col gap-1.5">
@@ -111,8 +119,8 @@ function X01Game({ match }: { match: Match }) {
             {editing ? de.game.cancelEdit : de.game.undo}
           </PadButton>
         </div>
-        {editing && <p className="font-bold text-board-red">{de.game.editing}</p>}
-        <div className="min-h-0 flex-1">
+        {editing && <p className="animate-enter font-bold text-board-red">{de.game.editing}</p>}
+        <div key={inputMode} className="min-h-0 flex-1 animate-enter">
           {inputMode === "board" && (
             <DartboardPad
               disabled={finished && !editing}
@@ -136,6 +144,7 @@ function X01Game({ match }: { match: Match }) {
         </div>
       </section>
 
+      {celebrate && <Stamp key={lastTurn.firstThrow}>180</Stamp>}
       {finished && !editing && <MatchOver match={match} winner={state.winner!} onUndo={undo} />}
     </div>
   );

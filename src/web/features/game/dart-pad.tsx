@@ -38,8 +38,10 @@ export function DartPad({ onDart, disabled }: { onDart: (dart: Dart) => void; di
       </PadButton>
       {NUMBERS.map((segment) => (
         <PadButton key={segment} onClick={() => send({ segment, multiplier })} disabled={disabled}>
-          {PREFIX[multiplier]}
-          {segment}
+          <span key={multiplier} className={multiplier === 1 ? "" : "animate-pop"}>
+            {PREFIX[multiplier]}
+            {segment}
+          </span>
         </PadButton>
       ))}
       <PadButton

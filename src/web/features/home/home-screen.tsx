@@ -30,7 +30,7 @@ export function HomeScreen() {
   const active = useMatches("active");
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-6 p-6">
+    <main className="mx-auto flex min-h-dvh max-w-3xl animate-enter flex-col justify-center gap-6 p-6">
       <h1 className="text-5xl font-black">{de.appName}</h1>
       <div className="flex flex-col gap-3">
         <Link to="/setup" className="min-h-14 bg-ink px-5 py-3 text-xl font-semibold text-paper">

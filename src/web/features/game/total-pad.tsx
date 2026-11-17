@@ -28,7 +28,7 @@ export function TotalPad({ remaining, outRule, disabled, onTotal }: Props) {
 
   if (checkoutScore !== null) {
     return (
-      <div className="flex h-full flex-col gap-3">
+      <div className="flex h-full animate-enter flex-col gap-3">
         <p className="text-xl font-bold">{de.game.howManyDarts}</p>
         <div className="grid flex-1 grid-cols-3 gap-1.5">
           {([1, 2, 3] as const).map((darts) => (
@@ -56,11 +56,14 @@ export function TotalPad({ remaining, outRule, disabled, onTotal }: Props) {
   return (
     <div className="grid h-full grid-cols-3 grid-rows-[auto_repeat(7,minmax(3rem,1fr))] gap-1.5">
       <output
-        className={`col-span-3 border-2 border-ink bg-white px-4 text-right text-5xl font-black tabular-nums ${
-          digits && !isPossibleTurnScore(score) ? "text-board-red" : ""
+        className={`col-span-3 overflow-hidden border-2 border-ink bg-white px-4 text-right text-5xl font-black tabular-nums transition-colors ${
+          digits && !isPossibleTurnScore(score) ? "animate-shake text-board-red" : ""
         }`}
       >
-        {digits || "0"}
+        {digits.slice(0, -1)}
+        <span key={digits} className="inline-block animate-pop">
+          {digits.slice(-1) || "0"}
+        </span>
       </output>
       {PRESETS.map((preset) => (
         <PadButton key={preset} tone="action" disabled={disabled} onClick={() => submit(preset)}>

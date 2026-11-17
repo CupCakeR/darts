@@ -1,6 +1,15 @@
-import type { Dart, Multiplier } from "#engine";
+import { dartLabel, type Dart, type Multiplier } from "#engine";
+import { useState, type MouseEvent } from "react";
 import { de } from "../../i18n/de.ts";
+import { flash } from "../../ui/motion.ts";
 import { PadButton } from "../../ui/pad-button.tsx";
+
+interface Hit {
+  id: number;
+  x: number;
+  y: number;
+  label: string;
+}
 
 const ORDER = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 const SEGMENT_ANGLE = 360 / ORDER.length;
@@ -37,6 +46,30 @@ function sector(inner: number, outer: number, from: number, to: number) {
   ].join(" ");
 }
 
+function boardPoint(event: MouseEvent<SVGGraphicsElement>) {
+  const matrix = event.currentTarget.ownerSVGElement?.getScreenCTM()?.inverse();
+  return new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix);
+}
+
+function HitMarker({ hit, onDone }: { hit: Hit; onDone: () => void }) {
+  return (
+    <g transform={`translate(${hit.x.toFixed(1)} ${hit.y.toFixed(1)})`} className="pointer-events-none">
+      <circle
+        r={24}
+        className="origin-center animate-ripple fill-none stroke-paper stroke-[4] [transform-box:fill-box]"
+      />
+      <text
+        y={-20}
+        textAnchor="middle"
+        onAnimationEnd={onDone}
+        className="origin-center animate-float fill-paper stroke-ink stroke-[8] text-[40px] font-black [paint-order:stroke] [transform-box:fill-box]"
+      >
+        {hit.label}
+      </text>
+    </g>
+  );
+}
+
 function fill(index: number, multiplier: Multiplier) {
   const even = index % 2 === 0;
   if (multiplier === 1) return even ? "fill-ink" : "fill-paper";
@@ -44,7 +77,17 @@ function fill(index: number, multiplier: Multiplier) {
 }
 
 export function DartboardPad({ onDart, disabled }: { onDart: (dart: Dart) => void; disabled: boolean }) {
-  const hit = (segment: number, multiplier: Multiplier) => () => onDart({ segment, multiplier });
+  const [hits, setHits] = useState<Hit[]>([]);
+
+  const hit = (segment: number, multiplier: Multiplier) => (event: MouseEvent<SVGGraphicsElement>) => {
+    const dart = { segment, multiplier };
+    flash(event.currentTarget);
+    const { x, y } = boardPoint(event);
+    const label = dartLabel(dart);
+    setHits((current) => [...current, { id: (current.at(-1)?.id ?? 0) + 1, x, y, label }]);
+    onDart(dart);
+  };
+  const removeHit = (id: number) => setHits((current) => current.filter((other) => other.id !== id));
   const target = "cursor-pointer stroke-ink/40 active:opacity-60";
 
   return (
@@ -80,8 +123,11 @@ export function DartboardPad({ onDart, disabled }: { onDart: (dart: Dart) => voi
         })}
         <circle r={RADIUS.outerBull} className={`fill-board-green ${target}`} onClick={hit(25, 1)} />
         <circle r={RADIUS.bull} className={`fill-board-red ${target}`} onClick={hit(25, 2)} />
+        {hits.map((current) => (
+          <HitMarker key={current.id} hit={current} onDone={() => removeHit(current.id)} />
+        ))}
       </svg>
-      <PadButton tone="action" onClick={hit(0, 1)}>
+      <PadButton tone="action" onClick={() => onDart({ segment: 0, multiplier: 1 })}>
         {de.game.miss}
       </PadButton>
     </div>

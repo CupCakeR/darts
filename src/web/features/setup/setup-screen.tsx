@@ -6,6 +6,7 @@ import { useCreateMatch } from "../../data/matches.ts";
 import { usePlayers } from "../../data/queries.ts";
 import { de } from "../../i18n/de.ts";
 import { Button } from "../../ui/button.tsx";
+import { press } from "../../ui/motion.ts";
 import { Field } from "../../ui/field.tsx";
 import { Screen } from "../../ui/screen.tsx";
 import { Segmented } from "../../ui/segmented.tsx";
@@ -35,14 +36,19 @@ function PlayerPicker({
           <button
             key={player.id}
             type="button"
+            onPointerDown={(event) => press(event.currentTarget)}
             onClick={() => toggle(player.id)}
-            className={`flex min-h-14 items-center gap-3 border-2 px-4 text-lg font-semibold ${
+            className={`flex min-h-14 items-center gap-3 border-2 px-4 text-lg font-semibold transition-colors duration-150 ${
               position >= 0 ? "border-ink bg-ink text-paper" : "border-ink/30"
             }`}
           >
             <span className="size-4" style={{ backgroundColor: player.color }} />
             {player.name}
-            {position >= 0 && <span className="tabular-nums">{position + 1}</span>}
+            {position >= 0 && (
+              <span key={position} className="animate-pop tabular-nums">
+                {position + 1}
+              </span>
+            )}
           </button>
         );
       })}
