@@ -2,7 +2,7 @@ import { dartLabel, type Dart, type Multiplier } from "#engine";
 import { useState, type MouseEvent } from "react";
 import { de } from "../../i18n/de.ts";
 import { flash } from "../../ui/motion.ts";
-import { PadButton } from "../../ui/pad-button.tsx";
+import { Key } from "../../ui/key.tsx";
 
 interface Hit {
   id: number;
@@ -62,7 +62,7 @@ function HitMarker({ hit, onDone }: { hit: Hit; onDone: () => void }) {
         y={-20}
         textAnchor="middle"
         onAnimationEnd={onDone}
-        className="origin-center animate-float fill-paper stroke-ink stroke-[8] text-[40px] font-black [paint-order:stroke] [transform-box:fill-box]"
+        className="origin-center animate-float fill-paper stroke-ink stroke-[8] font-display text-[40px] [paint-order:stroke] [transform-box:fill-box]"
       >
         {hit.label}
       </text>
@@ -114,7 +114,7 @@ export function DartboardPad({ onDart, disabled }: { onDart: (dart: Dart) => voi
                 transform={`translate(${point((RADIUS.double + RADIUS.numbers) / 2, index * SEGMENT_ANGLE)})`}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className="pointer-events-none fill-paper text-[26px] font-bold"
+                className="pointer-events-none fill-paper font-display text-[26px]"
               >
                 {segment}
               </text>
@@ -127,9 +127,9 @@ export function DartboardPad({ onDart, disabled }: { onDart: (dart: Dart) => voi
           <HitMarker key={current.id} hit={current} onDone={() => removeHit(current.id)} />
         ))}
       </svg>
-      <PadButton tone="action" onClick={() => onDart({ segment: 0, multiplier: 1 })}>
+      <Key tone="action" size="label" onClick={() => onDart({ segment: 0, multiplier: 1 })}>
         {de.game.miss}
-      </PadButton>
+      </Key>
     </div>
   );
 }

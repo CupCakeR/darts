@@ -4,9 +4,14 @@ import { press } from "./motion.ts";
 type Variant = "primary" | "plain";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-ink text-paper",
-  plain: "border-2 border-ink text-ink",
+  primary: "bg-ink text-paper border-ink [--rule-gap:var(--color-ink)]",
+  plain: "bg-key text-ink border-ink",
 };
+
+const base =
+  "double-rule label-caps flex min-h-14 items-center justify-center gap-2 rounded-xs px-5 transition-opacity duration-150 disabled:opacity-40";
+
+export const linkButton = (variant: Variant) => `${base} ${variants[variant]}`;
 
 export function Button({
   variant = "primary",
@@ -20,10 +25,6 @@ export function Button({
   };
 
   return (
-    <button
-      className={`min-h-14 px-5 text-lg font-semibold transition-opacity duration-150 disabled:opacity-40 ${variants[variant]} ${className}`}
-      onPointerDown={animate}
-      {...props}
-    />
+    <button className={`${base} ${variants[variant]} ${className}`} onPointerDown={animate} {...props} />
   );
 }

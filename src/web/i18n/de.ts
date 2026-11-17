@@ -41,6 +41,7 @@ export const de = {
     bust: "Bust",
     undo: "Zurück",
     miss: "Miss",
+    single: "Single",
     double: "Double",
     triple: "Triple",
     totalMode: "Summe",

@@ -14,9 +14,9 @@ export function Stepper({
   max: number;
   onChange: (value: number) => void;
 }) {
-  const button = "min-h-14 w-14 text-2xl font-bold transition-opacity disabled:opacity-30";
+  const button = "min-h-14 w-14 font-display text-2xl transition-opacity disabled:opacity-30";
   return (
-    <div className="flex items-center border-2 border-ink">
+    <div className="flex items-center self-start rounded-xs border-2 border-ink bg-key">
       <button
         type="button"
         className={button}
@@ -26,7 +26,10 @@ export function Stepper({
       >
         −
       </button>
-      <span key={value} className="min-w-12 animate-pop text-center text-2xl font-bold tabular-nums">
+      <span
+        key={value}
+        className="min-w-14 animate-pop border-x-2 border-ink py-3 text-center font-display text-2xl tabular-nums"
+      >
         {value}
       </span>
       <button

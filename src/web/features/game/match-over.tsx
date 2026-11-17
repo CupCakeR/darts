@@ -17,8 +17,8 @@ export function MatchOver({ match, winner, onUndo }: { match: Match; winner: num
 
   return (
     <div className="fixed inset-0 z-20 flex animate-fade items-center justify-center bg-ink/70 p-6">
-      <div className="flex w-full max-w-md animate-rise flex-col gap-4 bg-paper p-6">
-        <p className="animate-pop text-4xl font-black [animation-delay:150ms] [animation-fill-mode:backwards]">
+      <div className="surface-paper flex w-full max-w-md animate-rise flex-col gap-4 border-4 border-double border-ink p-6">
+        <p className="animate-pop font-display text-4xl [animation-delay:150ms] [animation-fill-mode:backwards]">
           {match.players[winner]!.name} {de.game.wins}
         </p>
         <Button onClick={rematch} disabled={createMatch.isPending}>
@@ -27,7 +27,7 @@ export function MatchOver({ match, winner, onUndo }: { match: Match; winner: num
         <Button variant="plain" onClick={onUndo}>
           {de.game.undo}
         </Button>
-        <Link to="/" className="text-center text-lg underline underline-offset-4">
+        <Link to="/" className="text-center text-lg italic underline decoration-1 underline-offset-4">
           {de.game.toHome}
         </Link>
       </div>

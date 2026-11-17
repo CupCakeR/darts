@@ -32,7 +32,7 @@ function AddPlayerForm({ nextColor }: { nextColor: string }) {
           {de.players.add}
         </Button>
       </div>
-      {nameTaken && <p className="text-board-red">{de.players.nameTaken}</p>}
+      {nameTaken && <p className="italic text-board-red">{de.players.nameTaken}</p>}
     </form>
   );
 }
@@ -42,9 +42,11 @@ function PlayerRow({ player }: { player: Player }) {
   const toggleArchived = () => update.mutate({ id: player.id, patch: { archived: !player.archived } });
 
   return (
-    <li className="flex min-h-16 items-center gap-4 border-b-2 border-ink/10">
+    <li className="flex min-h-16 items-center gap-4 border-b border-dashed border-ink/30">
       <span className="size-6 shrink-0" style={{ backgroundColor: player.color }} />
-      <span className={`flex-1 text-xl ${player.archived ? "text-ink/40" : ""}`}>{player.name}</span>
+      <span className={`flex-1 font-display text-xl ${player.archived ? "text-ink/40" : ""}`}>
+        {player.name}
+      </span>
       <Button variant="plain" onClick={toggleArchived} disabled={update.isPending}>
         {player.archived ? de.players.restore : de.players.archive}
       </Button>
@@ -70,7 +72,7 @@ export function PlayersScreen() {
         />
         {de.players.showArchived}
       </label>
-      {players.data?.length === 0 && <p className="text-ink/60">{de.players.empty}</p>}
+      {players.data?.length === 0 && <p className="italic text-ink/60">{de.players.empty}</p>}
       <ul>
         {players.data?.map((player) => (
           <PlayerRow key={player.id} player={player} />

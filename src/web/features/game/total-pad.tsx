@@ -1,7 +1,7 @@
 import { findCheckout, isPossibleTurnScore, type Rule } from "#engine";
 import { useState } from "react";
 import { de } from "../../i18n/de.ts";
-import { PadButton } from "../../ui/pad-button.tsx";
+import { Key } from "../../ui/key.tsx";
 
 const PRESETS = [26, 41, 45, 60, 81, 85, 100, 140, 180];
 const DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -29,10 +29,10 @@ export function TotalPad({ remaining, outRule, disabled, onTotal }: Props) {
   if (checkoutScore !== null) {
     return (
       <div className="flex h-full animate-enter flex-col gap-3">
-        <p className="text-xl font-bold">{de.game.howManyDarts}</p>
+        <p className="font-display text-xl">{de.game.howManyDarts}</p>
         <div className="grid flex-1 grid-cols-3 gap-1.5">
           {([1, 2, 3] as const).map((darts) => (
-            <PadButton
+            <Key
               key={darts}
               disabled={!findCheckout(remaining, darts, outRule)}
               onClick={() => {
@@ -41,12 +41,12 @@ export function TotalPad({ remaining, outRule, disabled, onTotal }: Props) {
               }}
             >
               {darts}
-            </PadButton>
+            </Key>
           ))}
         </div>
-        <PadButton tone="action" onClick={() => setCheckoutScore(null)}>
+        <Key tone="action" size="label" onClick={() => setCheckoutScore(null)}>
           {de.game.cancelEdit}
-        </PadButton>
+        </Key>
       </div>
     );
   }
@@ -56,7 +56,7 @@ export function TotalPad({ remaining, outRule, disabled, onTotal }: Props) {
   return (
     <div className="grid h-full grid-cols-3 grid-rows-[auto_repeat(7,minmax(3rem,1fr))] gap-1.5">
       <output
-        className={`col-span-3 overflow-hidden border-2 border-ink bg-white px-4 text-right text-5xl font-black tabular-nums transition-colors ${
+        className={`col-span-3 overflow-hidden rounded-xs border-2 border-ink bg-key px-4 text-right font-display text-5xl tabular-nums transition-colors ${
           digits && !isPossibleTurnScore(score) ? "animate-shake text-board-red" : ""
         }`}
       >
@@ -66,32 +66,24 @@ export function TotalPad({ remaining, outRule, disabled, onTotal }: Props) {
         </span>
       </output>
       {PRESETS.map((preset) => (
-        <PadButton key={preset} tone="action" disabled={disabled} onClick={() => submit(preset)}>
+        <Key key={preset} tone="action" disabled={disabled} onClick={() => submit(preset)}>
           {preset}
-        </PadButton>
+        </Key>
       ))}
       {DIGITS.map((digit) => (
-        <PadButton key={digit} disabled={disabled} onClick={() => type(digit)}>
+        <Key key={digit} disabled={disabled} onClick={() => type(digit)}>
           {digit}
-        </PadButton>
+        </Key>
       ))}
-      <PadButton
-        tone="action"
-        disabled={!digits}
-        onClick={() => setDigits((current) => current.slice(0, -1))}
-      >
+      <Key tone="action" disabled={!digits} onClick={() => setDigits((current) => current.slice(0, -1))}>
         ⌫
-      </PadButton>
-      <PadButton disabled={disabled} onClick={() => type("0")}>
+      </Key>
+      <Key disabled={disabled} onClick={() => type("0")}>
         0
-      </PadButton>
-      <PadButton
-        tone="active"
-        disabled={disabled || !isPossibleTurnScore(score)}
-        onClick={() => submit(score)}
-      >
+      </Key>
+      <Key tone="active" disabled={disabled || !isPossibleTurnScore(score)} onClick={() => submit(score)}>
         {de.game.enter}
-      </PadButton>
+      </Key>
     </div>
   );
 }

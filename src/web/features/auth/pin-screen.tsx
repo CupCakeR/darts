@@ -24,7 +24,7 @@ export function PinScreen() {
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">
       <form onSubmit={submit} className="flex w-full max-w-xs flex-col gap-4">
-        <h1 className="text-3xl font-bold">{de.auth.title}</h1>
+        <h1 className="font-display text-3xl">{de.auth.title}</h1>
         <TextInput
           type="password"
           inputMode="numeric"
@@ -35,7 +35,7 @@ export function PinScreen() {
         />
         <p
           key={login.failureCount}
-          className={`min-h-6 text-board-red ${login.error ? "animate-shake" : ""}`}
+          className={`min-h-6 italic text-board-red ${login.error ? "animate-shake" : ""}`}
         >
           {errorMessage(login.error)}
         </p>

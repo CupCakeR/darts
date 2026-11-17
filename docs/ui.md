@@ -1,6 +1,6 @@
 # UI direction
 
-Status: **not agreed yet.** This file collects what we learn together. Agents: don't invent a style, follow this file and ask if it doesn't cover something.
+Status: **agreed and implemented for the game screen.** Needs a check on the real iPad. This file collects what we learn together. Agents: don't invent a style, follow this file and ask if it doesn't cover something.
 
 ## Goals
 
@@ -27,8 +27,17 @@ Status: **not agreed yet.** This file collects what we learn together. Agents: d
 
 ## Agreed
 
-_Nothing yet._
+- Direction: **vintage pub scoreboard** (2026-11-17). Cream paper with a faint grain, near-black ink, board red/green only with meaning. Flat, hard edges or 2px radii, borders not shadows
+- Scoreboard: chalkboard (slate with chalk noise) inside a wood frame with a thin brass line. The active player's row is inverted to chalk with slate text. Frame only around the scoreboard, never around the whole screen
+- Typography: **Alfa Slab One** (wood-type slab, self-hosted via fontsource) for scores, pad keys, names and titles. **Libre Baskerville** for text: italic for meta lines and back links, letterspaced uppercase bold for labels and mode tabs (`label-caps`)
+- Keys and buttons are printed labels: 2px border plus a thin inner rule (`double-rule`), warm white fill. Pressed or active inverts to a solid fill. Double/Triple fill solid red/green when active, 25 is green and Bull red like the rings
+- Mode switch is one segmented bar, undo is a separate action key
+- Textures are procedural SVG noise in `styles.css` (`--texture-*`), applied only through the `surface-*` utilities and `ui/` primitives. Features never reference textures directly
+- Playfulness comes from motion (stamp, shake, count-down, hit marker), not decoration
 
 ## Rejected
 
-_Nothing yet._
+- Modern condensed sans (Barlow Condensed, Big Shoulders, Oswald): too much like a sports broadcast dashboard
+- Cork as the scoreboard surface: fights with the red/green player colors, weak contrast. Might still work behind the board pad later
+- Plain paper scoreboard with only a textured frame: too quiet
+- Chalk handwriting font (Fredericka the Great) for scores: on theme, but too thin and uneven to read fast

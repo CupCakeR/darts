@@ -1,7 +1,7 @@
 import type { Match } from "#contracts";
 import { replay, x01, type Dart, type Throw } from "#engine";
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { ApiError } from "../../data/client.ts";
 import {
   applyChange,
@@ -11,7 +11,10 @@ import {
   type ThrowChange,
 } from "../../data/matches.ts";
 import { de } from "../../i18n/de.ts";
-import { PadButton } from "../../ui/pad-button.tsx";
+import { Board } from "../../ui/board.tsx";
+import { Key } from "../../ui/key.tsx";
+import { BackLink } from "../../ui/screen.tsx";
+import { Segmented } from "../../ui/segmented.tsx";
 import { Stamp } from "../../ui/stamp.tsx";
 import { TABLET_QUERY, useMediaQuery } from "../../ui/use-media-query.ts";
 import { DartboardPad } from "./dartboard-pad.tsx";
@@ -23,6 +26,12 @@ import { TotalPad } from "./total-pad.tsx";
 type InputMode = "board" | "dart" | "total";
 
 const errorMessage = (code: string) => de.game.errors[code] ?? de.common.error;
+
+const MODES: { value: InputMode; label: string }[] = [
+  { value: "board", label: de.game.boardMode },
+  { value: "dart", label: de.game.dartMode },
+  { value: "total", label: de.game.totalMode },
+];
 
 function X01Game({ match }: { match: Match }) {
   const navigate = useNavigate();
@@ -78,48 +87,48 @@ function X01Game({ match }: { match: Match }) {
 
   return (
     <div className="grid h-dvh gap-3 overflow-hidden p-3 portrait:grid-rows-[auto_1fr] landscape:grid-cols-2">
-      <section className="flex min-h-0 flex-col gap-3 overflow-y-auto">
-        <header className="flex items-center gap-4 text-lg">
-          <Link to="/" className="underline underline-offset-4">
-            {de.common.back}
-          </Link>
-          <span className="flex-1 font-bold tabular-nums">
+      <section className="flex min-h-0 flex-col gap-2">
+        <header className="flex items-baseline justify-between gap-4 px-1">
+          <BackLink to="/" />
+          <span className="label-caps tabular-nums">
             {match.config.sets > 1 && `${de.game.set} ${state.set} · `}
             {de.game.leg} {state.leg} · {match.config.startScore}
           </span>
-          <button type="button" onClick={end} className="underline underline-offset-4">
+          <button
+            type="button"
+            onClick={end}
+            className="text-base italic underline decoration-1 underline-offset-4"
+          >
             {de.game.abandon}
           </button>
         </header>
-        <Scoreboard state={state} players={match.players} editing={editing?.seq ?? null} onEdit={startEdit} />
+        <Board className="min-h-0 flex-1 overflow-y-auto">
+          <Scoreboard
+            state={state}
+            players={match.players}
+            editing={editing?.seq ?? null}
+            onEdit={startEdit}
+          />
+        </Board>
         {(error ?? serverError) && (
-          <p key={error ?? serverError} className="animate-shake text-lg font-bold text-board-red">
+          <p key={error ?? serverError} className="animate-shake font-display text-lg text-board-red">
             {error ?? serverError}
           </p>
         )}
       </section>
 
       <section className="flex min-h-0 flex-col gap-1.5">
-        <div className="grid auto-cols-fr grid-flow-col gap-1.5">
-          {isTablet && (
-            <PadButton
-              tone={inputMode === "board" ? "active" : "action"}
-              onClick={() => setInputMode("board")}
-            >
-              {de.game.boardMode}
-            </PadButton>
-          )}
-          <PadButton tone={inputMode === "dart" ? "active" : "action"} onClick={() => setInputMode("dart")}>
-            {de.game.dartMode}
-          </PadButton>
-          <PadButton tone={inputMode === "total" ? "active" : "action"} onClick={() => setInputMode("total")}>
-            {de.game.totalMode}
-          </PadButton>
-          <PadButton tone="action" onClick={undo} disabled={!editing && match.throws.length === 0}>
+        <div className="grid grid-cols-[3fr_1.2fr] gap-1.5">
+          <Segmented
+            options={isTablet ? MODES : MODES.filter((mode) => mode.value !== "board")}
+            value={inputMode}
+            onChange={setInputMode}
+          />
+          <Key tone="action" size="label" onClick={undo} disabled={!editing && match.throws.length === 0}>
             {editing ? de.game.cancelEdit : de.game.undo}
-          </PadButton>
+          </Key>
         </div>
-        {editing && <p className="animate-enter font-bold text-board-red">{de.game.editing}</p>}
+        {editing && <p className="label-caps animate-enter text-board-red">{de.game.editing}</p>}
         <div key={inputMode} className="min-h-0 flex-1 animate-enter">
           {inputMode === "board" && (
             <DartboardPad

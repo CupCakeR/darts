@@ -9,20 +9,22 @@ export function Segmented<T extends string | number>({
   options,
   value,
   onChange,
+  className = "",
 }: {
   options: readonly Option<T>[];
   value: T;
   onChange: (value: T) => void;
+  className?: string;
 }) {
   return (
-    <div className="flex border-2 border-ink">
+    <div className={`flex overflow-hidden rounded-xs border-2 border-ink bg-key ${className}`}>
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
           onPointerDown={(event) => press(event.currentTarget)}
           onClick={() => onChange(option.value)}
-          className={`min-h-14 flex-1 px-3 text-lg font-semibold transition-colors duration-150 ${
+          className={`label-caps min-h-14 flex-1 border-r-2 border-ink px-3 transition-colors duration-150 last:border-r-0 ${
             option.value === value ? "bg-ink text-paper" : "text-ink"
           }`}
         >
