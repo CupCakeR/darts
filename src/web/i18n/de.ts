@@ -77,6 +77,7 @@ export const de = {
   },
   common: {
     back: "Zurück",
+    info: "Erklärung",
     error: "Etwas ist schiefgelaufen",
   },
 } as const;
