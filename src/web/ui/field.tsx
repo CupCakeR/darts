@@ -42,7 +42,7 @@ function InfoPopover({ text }: { text: string }) {
       {open && (
         <span
           role="tooltip"
-          className="surface-paper absolute top-full left-0 z-20 mt-2 w-72 origin-top-left animate-pop rounded-xs border-2 border-ink px-4 py-3 text-base normal-case italic tracking-normal"
+          className="surface-paper absolute top-full left-1/2 z-20 mt-2 w-72 origin-top -translate-x-1/2 animate-pop rounded-xs border-2 border-ink px-4 py-3 text-base normal-case italic tracking-normal"
         >
           {text}
         </span>
